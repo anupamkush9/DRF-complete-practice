@@ -4,8 +4,7 @@ from rest_framework.views import APIView
 from rest_framework.response import Response
 from first_app.models import Employee
 # Create your views here.
-class EmployeeListAPIView(APIView):
-    def get(self,request,format=None):
-        qs=Employee.objects.all()
-        serializer=EmployeeSerializer(qs,many=True)
-        return Response(serializer.data)
+from rest_framework import generics
+class EmployeeAPIView(generics.ListAPIView):
+    queryset=Employee.objects.all()
+    serializer_class=EmployeeSerializer
