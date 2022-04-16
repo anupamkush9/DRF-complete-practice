@@ -21,5 +21,9 @@ urlpatterns = [
     path('admin/', admin.site.urls),
     # path(r'^api/', views.TestApiView.as_view()),
     path('api-auth/', include('rest_framework.urls')),
-    path('api/', views.EmployeeAPIView.as_view()),
+    path('post_api/', views.EmployeeCreateAPIView.as_view()),
+    path('get_api/', views.EmployeeAPIView.as_view()),
+    path('detail_api/<int:pk>', views.EmployeeDetailAPIView.as_view()),
+    path('update_api/<int:id>', views.EmployeeUpdateAPIView.as_view()),
+    path('delete_api/<int:id>', views.EmployeeDeleteAPIView.as_view()),
 ]
