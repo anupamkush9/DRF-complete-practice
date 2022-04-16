@@ -16,12 +16,10 @@ Including another pathconf
 from django.contrib import admin
 from django.urls import path, include
 from first_app import views
-from rest_framework import routers
-router=routers.DefaultRouter()
-router.register('test-viewset',views.TestViewSet,basename='test-viewset')
+
 urlpatterns = [
     path('admin/', admin.site.urls),
     # path(r'^api/', views.TestApiView.as_view()),
     path('api-auth/', include('rest_framework.urls')),
-    path('',include(router.urls))
+    path('api/', views.EmployeeListAPIView.as_view()),
 ]
