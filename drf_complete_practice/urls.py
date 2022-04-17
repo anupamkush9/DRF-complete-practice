@@ -17,19 +17,15 @@ from django.contrib import admin
 from django.urls import path, include
 from first_app import views
 from rest_framework import routers
-router=routers.DefaultRouter()
-router.register('api',views.EmployeeCRUDCBV)
+from rest_framework_simplejwt import views as jwt_views
+# router=routers.DefaultRouter()
+# router.register('api',views.EmployeeCRUDCBV)
 urlpatterns = [
     path('admin/', admin.site.urls),
-    path("v/",include(router.urls)),
-    # # path(r'^api/', views.TestApiView.as_view()),
-    # path('api-auth/', include('rest_framework.urls')),
-    # path('post_api/', views.EmployeeCreateAPIView.as_view()),
-    # path('get_api/', views.EmployeeAPIView.as_view()),
-    # path('detail_api/<int:pk>', views.EmployeeDetailAPIView.as_view()),
-    # path('update_api/<int:id>', views.EmployeeUpdateAPIView.as_view()),
-    # path('delete_api/<int:id>', views.EmployeeDeleteAPIView.as_view()),
+    # path("v/",include(router.urls)),
+    path('hello/', views.HelloView.as_view(), name ='hello'),
+    path('api/token/',jwt_views.TokenObtainPairView.as_view(),name ='token_obtain_pair'),
+	path('api/token/refresh/',jwt_views.TokenRefreshView.as_view(),name ='token_refresh'),
+	path('api/token/verify/',jwt_views.TokenVerifyView.as_view(),name ='token_verify'),
 
-    # path('apis', views.EmployeeListModelMixin.as_view()),
-    # path('api/<int:pk>', views.EmployeeDetailAPIViewMixin.as_view()),
 ]
