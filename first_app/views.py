@@ -2,7 +2,12 @@ from django.shortcuts import render
 from first_app.models import Employee
 from first_app.serializer import EmployeeSerializer
 from rest_framework.viewsets import ModelViewSet
+from rest_framework.authentication import TokenAuthentication
+from rest_framework.permissions import IsAuthenticated,AllowAny,IsAdminUser
+
 class EmployeeCRUDCBV(ModelViewSet):
+    authentication_classes=[TokenAuthentication,]
+    permission_classes=[IsAuthenticated,]
     serializer_class=EmployeeSerializer
     queryset=Employee.objects.all()
 
