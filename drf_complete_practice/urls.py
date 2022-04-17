@@ -16,9 +16,12 @@ Including another pathconf
 from django.contrib import admin
 from django.urls import path, include
 from first_app import views
-
+from rest_framework import routers
+router=routers.DefaultRouter()
+router.register('api',views.EmployeeCRUDCBV)
 urlpatterns = [
     path('admin/', admin.site.urls),
+    path("v/",include(router.urls)),
     # # path(r'^api/', views.TestApiView.as_view()),
     # path('api-auth/', include('rest_framework.urls')),
     # path('post_api/', views.EmployeeCreateAPIView.as_view()),
@@ -27,6 +30,6 @@ urlpatterns = [
     # path('update_api/<int:id>', views.EmployeeUpdateAPIView.as_view()),
     # path('delete_api/<int:id>', views.EmployeeDeleteAPIView.as_view()),
 
-    path('apis', views.EmployeeListModelMixin.as_view()),
-    path('api/<int:pk>', views.EmployeeDetailAPIViewMixin.as_view()),
+    # path('apis', views.EmployeeListModelMixin.as_view()),
+    # path('api/<int:pk>', views.EmployeeDetailAPIViewMixin.as_view()),
 ]

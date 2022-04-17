@@ -1,29 +1,35 @@
-
-
-from rest_framework import mixins
-from rest_framework import generics
-
+from django.shortcuts import render
 from first_app.models import Employee
 from first_app.serializer import EmployeeSerializer
+from rest_framework.viewsets import ModelViewSet
+class EmployeeCRUDCBV(ModelViewSet):
+    serializer_class=EmployeeSerializer
+    queryset=Employee.objects.all()
 
-class EmployeeListModelMixin(mixins.CreateModelMixin,mixins.ListModelMixin,
-                            generics.GenericAPIView):
-    queryset=Employee.objects.all()
-    serializer_class=EmployeeSerializer
-    def get(self,request,*args,**kwargs):
-        return self.list(request,*args,**kwargs)
-    def post(self,request,*args,**kwargs):
-        return self.create(request,*args,**kwargs)
-class EmployeeDetailAPIViewMixin(mixins.UpdateModelMixin,mixins.DestroyModelMixin,
-                                generics.GenericAPIView):
-    queryset=Employee.objects.all()
-    serializer_class=EmployeeSerializer
-    def put(self,request,*args,**kwargs):
-        return self.update(request,*args,**kwargs)
-    def patch(self,request,*args,**kwargs):
-        return self.partial_update(request,*args,**kwargs)
-    def delete(self,request,*args,**kwargs):
-        return self.destroy(request,*args,**kwargs)
+# from rest_framework import mixins
+# from rest_framework import generics
+
+# from first_app.models import Employee
+# from first_app.serializer import EmployeeSerializer
+
+# class EmployeeListModelMixin(mixins.CreateModelMixin,mixins.ListModelMixin,
+#                             generics.GenericAPIView):
+#     queryset=Employee.objects.all()
+#     serializer_class=EmployeeSerializer
+#     def get(self,request,*args,**kwargs):
+#         return self.list(request,*args,**kwargs)
+#     def post(self,request,*args,**kwargs):
+#         return self.create(request,*args,**kwargs)
+# class EmployeeDetailAPIViewMixin(mixins.UpdateModelMixin,mixins.DestroyModelMixin,
+#                                 generics.GenericAPIView):
+#     queryset=Employee.objects.all()
+#     serializer_class=EmployeeSerializer
+#     def put(self,request,*args,**kwargs):
+#         return self.update(request,*args,**kwargs)
+#     def patch(self,request,*args,**kwargs):
+#         return self.partial_update(request,*args,**kwargs)
+#     def delete(self,request,*args,**kwargs):
+#         return self.destroy(request,*args,**kwargs)
 
 
 # from django.shortcuts import render
