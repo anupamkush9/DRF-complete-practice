@@ -1,14 +1,38 @@
-
-from rest_framework.views import APIView
-from rest_framework.response import Response
+from django.shortcuts import render
+from first_app.models import Employee
+from first_app.serializer import EmployeeSerializer
+from rest_framework import viewsets
 from rest_framework.permissions import IsAuthenticated
-from rest_framework_simplejwt.authentication import JWTAuthentication
-class HelloView(APIView):
-    authentication_classes = [JWTAuthentication,]
-    permission_classes = (IsAuthenticated, )
-    def get(self, request):
-        content = {'message': 'Hello, GeeksforGeeks'}
-        return Response(content)
+from rest_framework.response import Response
+from rest_framework.authentication import BasicAuthentication
+from rest_framework.decorators import authentication_classes, permission_classes, api_view
+@api_view(['GET', 'POST'])
+@authentication_classes([BasicAuthentication])
+@permission_classes([IsAuthenticated])
+def hello_world(request):
+    if request.method == 'POST':
+        return Response({"message": "Got some data!", "data": request.data})
+    return Response({"message": "Hello, world!"})
+# class EmployeeCRUDCBV(viewsets.ModelViewSet):
+#     queryset=Employee.objects.all()
+#     serializer_class=EmployeeSerializer
+#     authentication_classes=[SessionAuthentication,]
+#     permission_classes=[IsAuthenticated,]
+
+
+# from rest_framework.permissions import IsAuthenticated
+
+# from rest_framework.views import APIView
+# from rest_framework.response import Response
+# from rest_framework.permissions import IsAuthenticated
+# from rest_framework_simplejwt.authentication import JWTAuthentication
+# from rest_framework.authentication import BasicAuthentication
+# class HelloView(APIView):
+#     authentication_classes = [BasicAuthentication,]
+#     permission_classes = (IsAuthenticated, )
+#     def get(self, request):
+#         content = {'message': 'Hello, GeeksforGeeks'}
+#         return Response(content)
 
 
 #  from django.shortcuts import render
