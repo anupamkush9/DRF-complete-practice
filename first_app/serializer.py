@@ -1,11 +1,9 @@
-from first_app.models import Employee
 from rest_framework import serializers
-class EmployeeSerializer(serializers.ModelSerializer):
+from first_app.models import Course
+class CourseSerializer(serializers.ModelSerializer):
     class Meta:
-        model=Employee
-        fields='__all__'
-
-
+        model = Course
+        fields ="__all__"
 
 
 # from rest_framework import serializers

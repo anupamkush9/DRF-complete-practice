@@ -1,11 +1,10 @@
 from django.db import models
 
 # Create your models here.
-class Employee(models.Model):
-    eno=models.IntegerField()
-    ename=models.CharField(max_length=64)
-    esal=models.FloatField()
-    eaddr=models.CharField(max_length=64)
+class Course(models.Model):
+    name = models.CharField(max_length=30)
+    author = models.CharField(max_length=40)
+    price = models.IntegerField()
+    discount = models.IntegerField(default=0)
+    duration= models.FloatField()
 
-    def __str__(self):
-        return self.ename
