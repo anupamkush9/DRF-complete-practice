@@ -10,8 +10,12 @@ from first_app.serializer import TeachersSerializer, EmployeeSerializer
 from rest_framework.generics import get_object_or_404
 from rest_framework.views import APIView
 from rest_framework import viewsets
+from rest_framework.authentication import TokenAuthentication
+from rest_framework.permissions import IsAuthenticated,AllowAny,IsAdminUser
 
 class StudentViewSet(viewsets.ModelViewSet):
+    authentication_classes=[TokenAuthentication,]
+    permission_classes=[IsAuthenticated,]
     queryset = Student.objects.all()
     serializer_class = StudentSerializer
 

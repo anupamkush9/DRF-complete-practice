@@ -171,8 +171,17 @@
 		{
 			"name": "Get All students",
 			"request": {
+				"auth": {
+					"type": "noauth"
+				},
 				"method": "GET",
-				"header": [],
+				"header": [
+					{
+						"key": "Authorization",
+						"value": "Token b67dd6d9d922039653b53b0cc8442f75a6b41fcb",
+						"type": "text"
+					}
+				],
 				"url": {
 					"raw": "localhost:8000/students",
 					"host": [
