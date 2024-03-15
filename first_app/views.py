@@ -8,7 +8,7 @@ from first_app.models import Employee, Teachers
 from rest_framework import generics
 from first_app.serializer import TeachersSerializer, EmployeeSerializer
 from rest_framework.generics import get_object_or_404
-
+from rest_framework.views import APIView
 
 @api_view(['GET' , 'POST'])
 def courseListView(request):

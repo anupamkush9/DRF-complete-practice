@@ -10,7 +10,15 @@ class Course(models.Model):
 
     def __str__(self):
         return self.name
-    
+
+class Employee(models.Model):
+    ename = models.CharField(max_length=40)
+    esal = models.FloatField(default=0)
+    eaddr= models.CharField(max_length=400)
+
+    def __str__(self):
+        return self.name
+
 class Teachers(models.Model):
     teacher_name=models.CharField(max_length=64)
     teacher_sal=models.FloatField()
