@@ -29,6 +29,8 @@ def courseListView(request):
 @api_view(['GET' , 'PUT' , 'DELETE'])
 def courseDetailView(request , pk):
 
+    # get_object_or_404 is the recommended method
+    # below one is error more error prune.
     try:
         course = Course.objects.get(pk=pk)
     except Course.DoesNotExist:
@@ -47,7 +49,7 @@ def courseDetailView(request , pk):
 
     elif request.method == 'DELETE':
         course.delete()
-        return Response(status=status.HTTP_204_NO_CONTENT)
+        return Response({"message":f"record deleted successfully {pk}"})
 
 class EmployeeAPIView(generics.ListAPIView):
     queryset=Employee.objects.all()
