@@ -12,6 +12,17 @@ from rest_framework.views import APIView
 from rest_framework import viewsets
 from rest_framework.authentication import TokenAuthentication
 from rest_framework.permissions import IsAuthenticated,AllowAny,IsAdminUser
+from rest_framework.response import Response
+from rest_framework.permissions import IsAuthenticated
+from rest_framework_simplejwt.authentication import JWTAuthentication
+
+class HelloView(APIView):
+    authentication_classes = [JWTAuthentication,]
+    permission_classes = (IsAuthenticated, )
+    def get(self, request):
+        content = {'message': 'Hello, GeeksforGeeks'}
+        return Response(content)
+
 
 class StudentViewSet(viewsets.ModelViewSet):
     authentication_classes=[TokenAuthentication,]

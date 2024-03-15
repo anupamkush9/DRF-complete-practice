@@ -25,6 +25,68 @@
 			"response": []
 		},
 		{
+			"name": "hello_api-jwt-authentication",
+			"request": {
+				"method": "GET",
+				"header": [
+					{
+						"key": "Authorization",
+						"value": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ0b2tlbl90eXBlIjoiYWNjZXNzIiwiZXhwIjoxNzEwNTA5MjUyLCJpYXQiOjE3MTA1MDg5NTIsImp0aSI6IjFhODUxMTk3N2M0NzQ5YWRhNmE3YTNmZmEzNTE5NzUxIiwidXNlcl9pZCI6Mn0.hOQOzChgFpZLc5K1gYz1XPqZBPSwvBioohlyRfbs3nw",
+						"type": "text"
+					}
+				],
+				"url": {
+					"raw": "localhost:8000/hello",
+					"host": [
+						"localhost"
+					],
+					"port": "8000",
+					"path": [
+						"hello"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "get_access_token_refresh_Token",
+			"request": {
+				"auth": {
+					"type": "noauth"
+				},
+				"method": "POST",
+				"header": [
+					{
+						"key": "Bearer",
+						"value": "",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"username\":\"admin\",\n    \"password\":\"admin\"\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "localhost:8000/api/token/",
+					"host": [
+						"localhost"
+					],
+					"port": "8000",
+					"path": [
+						"api",
+						"token",
+						""
+					]
+				}
+			},
+			"response": []
+		},
+		{
 			"name": "Get Employes by ename",
 			"request": {
 				"method": "GET",

@@ -17,6 +17,7 @@ from django.contrib import admin
 from django.urls import path, include
 from first_app import views
 from rest_framework.routers import DefaultRouter
+from rest_framework_simplejwt import views as jwt_views
 
 router = DefaultRouter()
 router.register('students',views.StudentViewSet)
@@ -31,5 +32,9 @@ urlpatterns = [
     path('teachersdetailsapiview/<int:pk>', views.TeachersDetailApiView.as_view()),
     path('api-auth/', include('rest_framework.urls')),
     path('api/', views.EmployeeAPIView.as_view()),
+    path('hello/', views.HelloView.as_view(), name ='hello'),
+    path('api/token/',jwt_views.TokenObtainPairView.as_view(),name ='token_obtain_pair'),
+	path('api/token/refresh/',jwt_views.TokenRefreshView.as_view(),name ='token_refresh'),
+	path('api/token/verify/',jwt_views.TokenVerifyView.as_view(),name ='token_verify'),
     path('',include(router.urls))
 ]
