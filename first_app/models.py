@@ -26,3 +26,8 @@ class Teachers(models.Model):
 
     def __str__(self):
         return self.teacher_name
+
+class Student(models.Model):
+    name=models.CharField(max_length=50, blank=True, null=True)
+    marks = models.IntegerField(default=0)
+    email = models.EmailField(blank=True, null=True)
