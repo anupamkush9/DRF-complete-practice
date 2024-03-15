@@ -58,8 +58,15 @@ def courseDetailView(request , pk):
         return Response({"message":f"record deleted successfully {pk}"})
 
 class EmployeeAPIView(generics.ListAPIView):
-    queryset=Employee.objects.all()
+    # queryset=Employee.objects.all()
     serializer_class=EmployeeSerializer
+
+    def get_queryset(self):
+        qs=Employee.objects.all()
+        name=self.request.GET.get('ename')
+        if name is not None:
+            qs=qs.filter(ename__icontains=name)
+        return qs
 
 class TeachersApiView(APIView):
     def get(self, request):

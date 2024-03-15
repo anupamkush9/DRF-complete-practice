@@ -25,6 +25,30 @@
 			"response": []
 		},
 		{
+			"name": "Get Employes by ename",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "localhost:8000/api?ename=anuj",
+					"host": [
+						"localhost"
+					],
+					"port": "8000",
+					"path": [
+						"api"
+					],
+					"query": [
+						{
+							"key": "ename",
+							"value": "anuj"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
 			"name": "Create Teacher",
 			"request": {
 				"method": "POST",

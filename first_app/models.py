@@ -17,7 +17,7 @@ class Employee(models.Model):
     eaddr= models.CharField(max_length=400)
 
     def __str__(self):
-        return self.name
+        return self.ename
 
 class Teachers(models.Model):
     teacher_name=models.CharField(max_length=64)
