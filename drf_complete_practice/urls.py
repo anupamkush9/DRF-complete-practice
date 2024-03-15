@@ -23,4 +23,8 @@ urlpatterns = [
     # path('hello/', views.hello_world, name ='hello')
     path('courses', views.courseListView),
     path('courses/<int:pk>', views.courseDetailView),
+    path('teachersapiview/', views.TeachersApiView.as_view()),
+    path('teachersdetailsapiview/<int:pk>', views.TeachersDetailApiView.as_view()),
+    path('api-auth/', include('rest_framework.urls')),
+    path('api/', views.EmployeeAPIView.as_view()),
 ]
