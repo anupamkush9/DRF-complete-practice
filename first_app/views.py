@@ -3,12 +3,18 @@ from rest_framework.response import Response
 from rest_framework.decorators import api_view
 from rest_framework import status
 from .models import Course
-from .serializer import CourseSerializer
-from first_app.models import Employee, Teachers
+from .serializer import CourseSerializer, StudentSerializer
+from first_app.models import Employee, Teachers, Student
 from rest_framework import generics
 from first_app.serializer import TeachersSerializer, EmployeeSerializer
 from rest_framework.generics import get_object_or_404
 from rest_framework.views import APIView
+from rest_framework import viewsets
+
+class StudentViewSet(viewsets.ModelViewSet):
+    queryset = Student.objects.all()
+    serializer_class = StudentSerializer
+
 
 @api_view(['GET' , 'POST'])
 def courseListView(request):

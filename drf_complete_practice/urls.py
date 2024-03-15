@@ -16,7 +16,11 @@ Including another pathconf
 from django.contrib import admin
 from django.urls import path, include
 from first_app import views
-from rest_framework import routers
+from rest_framework.routers import DefaultRouter
+
+router = DefaultRouter()
+router.register('students',views.StudentViewSet)
+
 # from rest_framework_simplejwt import views as jwt_views
 urlpatterns = [
     path('admin/', admin.site.urls),
@@ -27,4 +31,5 @@ urlpatterns = [
     path('teachersdetailsapiview/<int:pk>', views.TeachersDetailApiView.as_view()),
     path('api-auth/', include('rest_framework.urls')),
     path('api/', views.EmployeeAPIView.as_view()),
+    path('',include(router.urls))
 ]
