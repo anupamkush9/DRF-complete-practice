@@ -19,7 +19,8 @@ from first_app import views
 
 urlpatterns = [
     path('admin/', admin.site.urls),
-    # path(r'^api/', views.TestApiView.as_view()),
+    path('teachersapiview/', views.TeachersApiView.as_view()),
+    path('teachersdetailsapiview/<int:pk>', views.TeachersDetailApiView.as_view()),
     path('api-auth/', include('rest_framework.urls')),
     path('api/', views.EmployeeAPIView.as_view()),
 ]
