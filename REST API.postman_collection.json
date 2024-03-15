@@ -1,0 +1,150 @@
+{
+	"info": {
+		"_postman_id": "96309c93-1036-49c2-a57d-f16dd1dc00e0",
+		"name": "REST API",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "30012341"
+	},
+	"item": [
+		{
+			"name": "Get All Employes",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "localhost:8000/api",
+					"host": [
+						"localhost"
+					],
+					"port": "8000",
+					"path": [
+						"api"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Create Teacher",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"teacher_name\":\"teacher2\",\n    \"teacher_sal\": 2000,\n    \"teacher_addr\": \"this is demo address\"\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "localhost:8000/teachersapiview/",
+					"host": [
+						"localhost"
+					],
+					"port": "8000",
+					"path": [
+						"teachersapiview",
+						""
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Get All Employes (teachersapiview)",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "localhost:8000/teachersapiview/",
+					"host": [
+						"localhost"
+					],
+					"port": "8000",
+					"path": [
+						"teachersapiview",
+						""
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Get detail by id",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "localhost:8000/teachersdetailsapiview/3",
+					"host": [
+						"localhost"
+					],
+					"port": "8000",
+					"path": [
+						"teachersdetailsapiview",
+						"3"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "update a teacher record by id",
+			"request": {
+				"method": "PUT",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"teacher_name\":\"teacher2\",\n    \"teacher_sal\": 2000,\n    \"teacher_addr\": \"this is demo address2222\"\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "localhost:8000/teachersdetailsapiview/2",
+					"host": [
+						"localhost"
+					],
+					"port": "8000",
+					"path": [
+						"teachersdetailsapiview",
+						"2"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "delete a teacher record by id",
+			"request": {
+				"method": "DELETE",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"teacher_name\":\"teacher2\",\n    \"teacher_sal\": 2000,\n    \"teacher_addr\": \"this is demo address2222\"\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "localhost:8000/teachersdetailsapiview/2",
+					"host": [
+						"localhost"
+					],
+					"port": "8000",
+					"path": [
+						"teachersdetailsapiview",
+						"2"
+					]
+				}
+			},
+			"response": []
+		}
+	]
+}
