@@ -1,0 +1,14 @@
+version: '3'
+
+services:
+  web:
+    build: .
+    container_name: drf_complete_practice_proj
+    # command:
+    #       sh -c "pip install djangorestframework &&
+    #        python3 manage.py runserver 0.0.0.0:8000"
+    command: "python3 manage.py runserver 0.0.0.0:8000"
+    volumes:
+      - .:/app
+    ports:
+      - "8000:8000"
