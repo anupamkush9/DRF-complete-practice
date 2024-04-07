@@ -17,6 +17,9 @@ from rest_framework.permissions import IsAuthenticated
 from rest_framework_simplejwt.authentication import JWTAuthentication
 from rest_framework.authentication import BasicAuthentication
 from rest_framework.decorators import authentication_classes, permission_classes, api_view
+from rest_framework.decorators import api_view, throttle_classes
+from rest_framework.throttling import UserRateThrottle
+from rest_framework.views import APIView
 
 @api_view(['GET', 'POST'])
 @authentication_classes([BasicAuthentication])
@@ -126,3 +129,21 @@ class TeachersDetailApiView(APIView):
         teacher = get_object_or_404(Teachers.objects.all(), pk=pk)
         teacher.delete()
         return Response({"status":200})
+
+
+class ExampleView(APIView):
+    throttle_classes = [UserRateThrottle]
+
+    def get(self, request, format=None):
+        content = {
+            'status': 'request was permitted in class based APIView'
+        }
+        return Response(content)
+
+@api_view(['GET'])
+@throttle_classes([UserRateThrottle])
+def example_view(request, format=None):
+    content = {
+        'status': 'request was permitted in function based api_view'
+    }
+    return Response(content)
