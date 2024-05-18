@@ -20,6 +20,59 @@ from rest_framework.decorators import authentication_classes, permission_classes
 from rest_framework.decorators import api_view, throttle_classes
 from rest_framework.throttling import UserRateThrottle
 from rest_framework.views import APIView
+from drf_yasg import openapi
+from drf_yasg.utils import swagger_auto_schema
+from rest_framework.decorators import api_view
+from .utility import getLimitOffset
+import math
+
+
+test_param = openapi.Parameter('test', openapi.IN_QUERY, description="test manual param", type=openapi.TYPE_BOOLEAN)
+
+UNAUTHORIZED_RESPONSE_TYPE = openapi.Response(
+    description='Unauthorized',
+    schema=openapi.Schema(
+        type='object',
+        properties={
+            'detail': openapi.Schema(
+                type='string',
+                description='Authentication credentials were not provided'
+            )
+        }
+    )
+)
+
+PAGINATION_LIST = [
+    openapi.Parameter(
+        name='limit',
+        in_=openapi.IN_QUERY,
+        type=openapi.TYPE_NUMBER,
+        description='',
+        required=False,
+    ),
+    openapi.Parameter(
+        name='page',
+        in_=openapi.IN_QUERY,
+        type=openapi.TYPE_NUMBER,
+        description='Enter page number',
+        required=False,
+    ),
+    openapi.Parameter(
+        name='page_size',
+        in_=openapi.IN_QUERY,
+        type=openapi.TYPE_NUMBER,
+        description='Enter page size',
+        required=False,
+    ),
+    openapi.Parameter(
+        name='order',
+        in_=openapi.IN_QUERY,
+        type=openapi.TYPE_STRING,
+        description='Enter the order of the list. (asc or desc)',
+        required=False,
+    ),
+]
+
 
 @api_view(['GET', 'POST'])
 @authentication_classes([BasicAuthentication])
@@ -43,13 +96,69 @@ class StudentViewSet(viewsets.ModelViewSet):
     queryset = Student.objects.all()
     serializer_class = StudentSerializer
 
+# 'method' can be used to customize a single HTTP method of a view
+@swagger_auto_schema(method='get',
+                     manual_parameters = [ 
+                        openapi.Parameter(
+                            name='id',
+                            in_=openapi.IN_QUERY,
+                            type=openapi.TYPE_NUMBER,
+                            description='Enter ID',
+                            required=False,
+                        ),
+                        openapi.Parameter(
+                            name='rid',
+                            in_=openapi.IN_QUERY,
+                            type=openapi.TYPE_NUMBER,
+                            description='Enter RID',
+                            required=False,
+                        ),
+                    ] + PAGINATION_LIST, 
+                    responses={200: "ok"})
+# 'methods' can be used to apply the same modification to multiple methods
+@swagger_auto_schema(methods=['post'], request_body=CourseSerializer,
+                    # in this api, response body was generated automatically still we have overridden responses for our custom implmentation
+                    responses={401 : UNAUTHORIZED_RESPONSE_TYPE, 200: CourseSerializer,  400: 'Bad Request'},
+                     )
 
 @api_view(['GET' , 'POST'])
 def courseListView(request):
     if request.method == 'GET':
-        courses = Course.objects.all()
-        courseSerializer = CourseSerializer(courses , many=True)
-        return Response(courseSerializer.data)
+        id = request.GET["id"] if "id" in request.GET and request.GET["id"] is not None and request.GET['id'] != "" else None
+        rid = request.GET["rid"] if "rid" in request.GET and request.GET["rid"] is not None and request.GET['rid'] != "" else None
+        if id:
+            return Response({"success":True, "success_message":"Record found", "pagination":None, "data":f'custom response for id {id} parameter'}, status=status.HTTP_200_OK)
+        if rid:
+            return Response({"success":True, "success_message":"Record found", "pagination":None, "data":f'custom response for rid {rid} parameter'}, status=status.HTTP_200_OK)
+        
+        offset, limit, page, page_size, order = getLimitOffset(request)
+        print("offset, limit, page, page_size, order",offset, limit, page, page_size, order)
+        if order.lower() == "asc": 
+            query_order = "id" 
+        else:
+            query_order = "-id"  
+        courses_queryset = Course.objects.all().order_by(query_order)
+        if not courses_queryset:
+            # here nothing will display on swagger because we have used status code status = status.HTTP_204_NO_CONTENT
+            return Response({"filters":None, "success":True, "success_message":"No record found", "errors":[], "pagination":None, "data":None,}, status=status.HTTP_204_NO_CONTENT)
+        total_records = len(courses_queryset) 
+
+        courses_queryset = courses_queryset[offset:limit]
+        count = len(courses_queryset) 
+        if total_records == count or page == 0: 
+            page = 1 
+    
+        if page_size == 0: 
+            page_size = total_records 
+        
+        if page_size > 0: 
+            total_pages = math.ceil(total_records/page_size) 
+        else: 
+            total_pages = 1 
+        pagination = {"total_records" : total_records, "count" : count, "page_size" : page_size, "total_pages" : total_pages, "current_page" : page, "order" : order}        
+        course_serialize_data = CourseSerializer(courses_queryset , many=True).data 
+        return Response({"success":True, "success_message":"Record found", "pagination":pagination, "data":course_serialize_data}, status=status.HTTP_200_OK)
+
 
     elif request.method == 'POST':
         courseSerializer = CourseSerializer(data = request.data)
@@ -58,8 +167,8 @@ def courseListView(request):
             return Response(courseSerializer.data , status=status.HTTP_201_CREATED)
         
         return Response(courseSerializer.errors)
-
-
+@swagger_auto_schema(method='get', responses={200: CourseSerializer()})
+@swagger_auto_schema(method='put', responses={200: CourseSerializer()})
 @api_view(['GET' , 'PUT' , 'DELETE'])
 def courseDetailView(request , pk):
 
