@@ -12,6 +12,11 @@ https://docs.djangoproject.com/en/4.0/ref/settings/
 
 from pathlib import Path
 from datetime import timedelta
+from django.urls import re_path
+from rest_framework import permissions
+from drf_yasg.views import get_schema_view
+from drf_yasg import openapi
+
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
 
@@ -40,7 +45,8 @@ INSTALLED_APPS = [
     'first_app',
     'rest_framework.authtoken',
     'rest_framework_simplejwt',
-    'rest_framework'
+    'rest_framework',
+    'drf_yasg',
 ]
 
 MIDDLEWARE = [
@@ -133,8 +139,8 @@ REST_FRAMEWORK={
         'rest_framework.throttling.UserRateThrottle'
     ],
     'DEFAULT_THROTTLE_RATES': {
-        'anon': '1/day',
-        'user': '1/day'
+        'anon': '50/day',
+        'user': '50/day'
     }
 }
 
@@ -146,7 +152,7 @@ REST_FRAMEWORK={
 # }
 
 SIMPLE_JWT = {
-    'ACCESS_TOKEN_LIFETIME': timedelta(minutes=5),
+    'ACCESS_TOKEN_LIFETIME': timedelta(minutes=50),
     'REFRESH_TOKEN_LIFETIME': timedelta(days=1),
     'ROTATE_REFRESH_TOKENS': False,
     'BLACKLIST_AFTER_ROTATION': False,
@@ -179,4 +185,9 @@ SIMPLE_JWT = {
 
 JWT_AUTH={
 'JWT_ALLOW_REFRESH': True,
+}
+
+SWAGGER_SETTINGS = {
+    'VALIDATOR_URL': None
+    # 'VALIDATOR_URL': 'http://localhost:8189',
 }

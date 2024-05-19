@@ -18,6 +18,26 @@ class StudentSerializer(serializers.ModelSerializer):
         model=Student
         fields='__all__'
 
+
+class CourseNoRequiredSerializer(serializers.ModelSerializer):
+    """
+        This serializer is created just for swagger response purpose.
+    """
+    
+    def __init__(self, *args, **kwargs):
+        '''
+          For setting all fields required attribute to False for swagger response use only
+        '''
+        super().__init__(*args, **kwargs)
+        for field_name, field in self.fields.items():
+            field.required = False
+
+    class Meta:
+        model=Course
+        fields='__all__'
+        ref_name = "Response Data"  # for overriding model value on swagger ui
+
+
 class TeachersSerializer(serializers.Serializer):
 
     def multiples_of_1000(value):
@@ -55,6 +75,33 @@ class TeachersSerializer(serializers.Serializer):
         instance.teacher_addr = validated_data.get('teacher_addr', instance.teacher_addr)
         instance.save()
         return instance
+
+class TeachersNoRequiredSerializer(serializers.Serializer):
+    """
+        This serializer is created just for swagger response purpose.
+    """
+    
+    def __init__(self, *args, **kwargs):
+        '''
+          For setting all fields required attribute to False for swagger response use only
+        '''
+        super().__init__(*args, **kwargs)
+        for field_name, field in self.fields.items():
+            field.required = False
+
+    id = serializers.IntegerField(read_only=True)
+    teacher_name=serializers.CharField(max_length=27)
+    teacher_sal=serializers.FloatField()
+    teacher_addr=serializers.CharField()
+     
+    class Meta:
+        ref_name = ""  # for overriding model value on swagger ui
+       
+    def create(self, validated_data):
+        """
+        Create and return a new instance of the validated data.
+        """
+        return Teachers.objects.create(**validated_data)
 
 
     
