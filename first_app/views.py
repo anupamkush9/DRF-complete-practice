@@ -3,7 +3,7 @@ from rest_framework.response import Response
 from rest_framework.decorators import api_view
 from rest_framework import status
 from .models import Course
-from .serializer import CourseSerializer, StudentSerializer
+from .serializer import CourseSerializer, StudentSerializer, CourseNoRequiredSerializer, TeachersNoRequiredSerializer
 from first_app.models import Employee, Teachers, Student
 from rest_framework import generics
 from first_app.serializer import TeachersSerializer, EmployeeSerializer
@@ -37,6 +37,40 @@ UNAUTHORIZED_RESPONSE_TYPE = openapi.Response(
             'detail': openapi.Schema(
                 type='string',
                 description='Authentication credentials were not provided'
+            )
+        }
+    )
+)
+
+API_DELETE_RESPONSE = openapi.Response(
+    description='',
+    schema=openapi.Schema(
+        type='object',
+        properties={
+            'message': openapi.Schema(
+                type='string',
+                description="record deleted successfully {id}",
+            ),
+            'success': openapi.Schema(
+                type='boolean',
+                description="true/false",
+            ),
+            'data': openapi.Schema(
+                type='string',
+                description="null",
+            ),
+        }
+    )
+)
+
+DETAILS_NOT_FOUND_RESPONSE = openapi.Response(
+    description='',
+    schema=openapi.Schema(
+        type='object',
+        properties={
+            'detail': openapi.Schema(
+                type='string',
+                description="Not found",
             )
         }
     )
@@ -114,11 +148,11 @@ class StudentViewSet(viewsets.ModelViewSet):
                             required=False,
                         ),
                     ] + PAGINATION_LIST, 
-                    responses={200: "ok"})
+                    responses={200: CourseNoRequiredSerializer(many=True)})
 # 'methods' can be used to apply the same modification to multiple methods
 @swagger_auto_schema(methods=['post'], request_body=CourseSerializer,
                     # in this api, response body was generated automatically still we have overridden responses for our custom implmentation
-                    responses={401 : UNAUTHORIZED_RESPONSE_TYPE, 200: CourseSerializer,  400: 'Bad Request'},
+                    responses={401 : UNAUTHORIZED_RESPONSE_TYPE, 200: CourseNoRequiredSerializer,  400: 'Bad Request'},
                      )
 
 @api_view(['GET' , 'POST'])
@@ -167,8 +201,9 @@ def courseListView(request):
             return Response(courseSerializer.data , status=status.HTTP_201_CREATED)
         
         return Response(courseSerializer.errors)
-@swagger_auto_schema(method='get', responses={200: CourseSerializer()})
-@swagger_auto_schema(method='put', responses={200: CourseSerializer()})
+@swagger_auto_schema(method='get', responses={200: CourseSerializer(), 404:DETAILS_NOT_FOUND_RESPONSE})
+@swagger_auto_schema(method='put', responses={200: CourseSerializer(), 401 : UNAUTHORIZED_RESPONSE_TYPE, 400:'Bad Request' 404:DETAILS_NOT_FOUND_RESPONSE})
+@swagger_auto_schema(method='delete', responses={200: API_DELETE_RESPONSE, 404:DETAILS_NOT_FOUND_RESPONSE})
 @api_view(['GET' , 'PUT' , 'DELETE'])
 def courseDetailView(request , pk):
 
@@ -192,7 +227,7 @@ def courseDetailView(request , pk):
 
     elif request.method == 'DELETE':
         course.delete()
-        return Response({"message":f"record deleted successfully {pk}"})
+        return Response({"message":f"record deleted successfully {pk}", "success":True, "data":None})
 
 class EmployeeAPIView(generics.ListAPIView):
     # queryset=Employee.objects.all()
@@ -206,11 +241,70 @@ class EmployeeAPIView(generics.ListAPIView):
         return qs
 
 class TeachersApiView(APIView):
+    
+    # In Swagger (OpenAPI), a tag is used to group related API endpoints together, enhancing the organization and readability of the API documentation.
+    @swagger_auto_schema(
+                     manual_parameters = [ 
+                        openapi.Parameter(
+                            name='id',
+                            in_=openapi.IN_QUERY,
+                            type=openapi.TYPE_NUMBER,
+                            description='Enter ID',
+                            required=False,
+                        ),
+                        openapi.Parameter(
+                            name='rid',
+                            in_=openapi.IN_QUERY,
+                            type=openapi.TYPE_NUMBER,
+                            description='Enter RID',
+                            required=False,
+                        ),
+                    ] + PAGINATION_LIST, 
+                    responses={200: TeachersSerializer(many=True)},
+                    tags=['Teachers API'],
+                    )
     def get(self, request):
-            queryset = Teachers.objects.all()
-            serializer = TeachersSerializer(queryset, many=True)
-            return Response(serializer.data)
+        id = request.GET["id"] if "id" in request.GET and request.GET["id"] is not None and request.GET['id'] != "" else None
+        rid = request.GET["rid"] if "rid" in request.GET and request.GET["rid"] is not None and request.GET['rid'] != "" else None
+        if id:
+            return Response({"success":True, "success_message":"Record found", "pagination":None, "data":f'custom response for id {id} parameter'}, status=status.HTTP_200_OK)
+        if rid:
+            return Response({"success":True, "success_message":"Record found", "pagination":None, "data":f'custom response for rid {rid} parameter'}, status=status.HTTP_200_OK)
+        
+        offset, limit, page, page_size, order = getLimitOffset(request)
+        print("offset, limit, page, page_size, order",offset, limit, page, page_size, order)
+        if order.lower() == "asc": 
+            query_order = "id" 
+        else:
+            query_order = "-id"  
+        teachers_queryset = Teachers.objects.all().order_by(query_order)
+        if not teachers_queryset:
+            # here nothing will display on swagger because we have used status code status = status.HTTP_204_NO_CONTENT
+            return Response({"filters":None, "success":True, "success_message":"No record found", "errors":[], "pagination":None, "data":None,}, status=status.HTTP_204_NO_CONTENT)
+        total_records = len(teachers_queryset) 
 
+        teachers_queryset = teachers_queryset[offset:limit]
+        count = len(teachers_queryset) 
+        if total_records == count or page == 0: 
+            page = 1 
+    
+        if page_size == 0: 
+            page_size = total_records 
+        
+        if page_size > 0: 
+            total_pages = math.ceil(total_records/page_size) 
+        else: 
+            total_pages = 1 
+        pagination = {"total_records" : total_records, "count" : count, "page_size" : page_size, "total_pages" : total_pages, "current_page" : page, "order" : order}        
+        teachers_serialize_data = TeachersSerializer(teachers_queryset , many=True).data 
+        return Response({"success":True, "success_message":"Record found", "pagination":pagination, "data":teachers_serialize_data}, status=status.HTTP_200_OK)
+
+    # In Swagger (OpenAPI), a tag is used to group related API endpoints together, enhancing the organization and readability of the API documentation.
+    @swagger_auto_schema(request_body=TeachersSerializer,
+                    # in this api, response body was generated automatically still we have overridden responses for our custom implmentation
+                    responses={401 : UNAUTHORIZED_RESPONSE_TYPE, 200: TeachersSerializer,  400: 'Bad Request'},
+                    tags=['Teachers API'],
+                     )
     def post(self,request):
         serializer=TeachersSerializer(data=request.data)
         if serializer.is_valid():
@@ -219,12 +313,21 @@ class TeachersApiView(APIView):
         return Response(serializer.errors,status=400)
 
 class TeachersDetailApiView(APIView):
-
+    @swagger_auto_schema(responses={200:  openapi.Response(
+                            description="OK",
+                            schema=TeachersNoRequiredSerializer()
+                        ), 404:DETAILS_NOT_FOUND_RESPONSE, 401 : UNAUTHORIZED_RESPONSE_TYPE,})
     def get(self, request, pk=None):
         teacher = get_object_or_404(Teachers.objects.all(), pk=pk)
         serializer = TeachersSerializer(teacher)
         return Response({"data":serializer.data, "status":200})
 
+    @swagger_auto_schema(request_body=TeachersSerializer,
+                    # in this api, response body was generated automatically still we have overridden responses for our custom implmentation
+                    responses={401 : UNAUTHORIZED_RESPONSE_TYPE, 200:  openapi.Response(
+                    description="OK",
+                    schema=TeachersNoRequiredSerializer()
+                ),  400: 'Bad Request', 404:DETAILS_NOT_FOUND_RESPONSE})
     def put(self,request,pk=None):
         teacher = get_object_or_404(Teachers.objects.all(), pk=pk)
         serializer = TeachersSerializer(teacher, data=request.data)
@@ -233,11 +336,12 @@ class TeachersDetailApiView(APIView):
             return Response(serializer.data)
         return Response(serializer.errors)
 
+    @swagger_auto_schema(responses={200: API_DELETE_RESPONSE, 404:DETAILS_NOT_FOUND_RESPONSE, 401 : UNAUTHORIZED_RESPONSE_TYPE,})
     def delete(self, request, pk=None, format=None) -> Response:
         """ For deleting a post, HTTP method: DELETE """
         teacher = get_object_or_404(Teachers.objects.all(), pk=pk)
         teacher.delete()
-        return Response({"status":200})
+        return Response({"message":f"record deleted successfully {pk}", "success":True, "data":None})
 
 
 class ExampleView(APIView):
