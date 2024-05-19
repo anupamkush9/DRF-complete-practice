@@ -202,7 +202,7 @@ def courseListView(request):
         
         return Response(courseSerializer.errors)
 @swagger_auto_schema(method='get', responses={200: CourseSerializer(), 404:DETAILS_NOT_FOUND_RESPONSE})
-@swagger_auto_schema(method='put', responses={200: CourseSerializer(), 401 : UNAUTHORIZED_RESPONSE_TYPE, 400:'Bad Request' 404:DETAILS_NOT_FOUND_RESPONSE})
+@swagger_auto_schema(method='put', responses={200: CourseSerializer(), 401 : UNAUTHORIZED_RESPONSE_TYPE, 400:'Bad Request', 404:DETAILS_NOT_FOUND_RESPONSE})
 @swagger_auto_schema(method='delete', responses={200: API_DELETE_RESPONSE, 404:DETAILS_NOT_FOUND_RESPONSE})
 @api_view(['GET' , 'PUT' , 'DELETE'])
 def courseDetailView(request , pk):
