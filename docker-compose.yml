@@ -12,3 +12,6 @@ services:
       - .:/app
     ports:
       - "8000:8000"
+
+# for running the project
+# sudo docker compose up

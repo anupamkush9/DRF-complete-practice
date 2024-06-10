@@ -144,7 +144,7 @@ def hello_world(request):
     return Response({"message": "Hello, world!"})
 
 class HelloView(APIView):
-    authentication_classes = [JWTAuthentication,]
+    authentication_classes = [JWTAuthentication, BasicAuthentication]
     permission_classes = (IsAuthenticated, )
     def get(self, request):
         content = {'message': 'Hello, GeeksforGeeks'}
@@ -152,7 +152,7 @@ class HelloView(APIView):
 
 
 class StudentViewSet(viewsets.ModelViewSet):
-    authentication_classes=[TokenAuthentication,]
+    authentication_classes=[TokenAuthentication,BasicAuthentication]
     permission_classes=[IsAuthenticated,]
     queryset = Student.objects.all()
     serializer_class = StudentSerializer
@@ -287,7 +287,7 @@ class EmployeeAPIView(generics.ListAPIView):
         return qs
 
 class TeachersApiView(APIView):
-    authentication_classes=[TokenAuthentication,]
+    authentication_classes=[TokenAuthentication,BasicAuthentication]
     permission_classes=[IsAuthenticated,]
     # In Swagger (OpenAPI), a tag is used to group related API endpoints together, enhancing the organization and readability of the API documentation.
     @swagger_auto_schema(
@@ -366,7 +366,7 @@ class TeachersApiView(APIView):
             return Response({"errors":[SERVER_ERROR_MESSAGE], "data":None, "success":False}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
 class TeachersDetailApiView(APIView):
-    authentication_classes=[TokenAuthentication,]
+    authentication_classes=[TokenAuthentication, BasicAuthentication]
     permission_classes=[IsAuthenticated,]
     @swagger_auto_schema(responses={200:  openapi.Response(
                             description="OK",
