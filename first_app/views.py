@@ -28,6 +28,7 @@ import math
 
 
 test_param = openapi.Parameter('test', openapi.IN_QUERY, description="test manual param", type=openapi.TYPE_BOOLEAN)
+SERVER_ERROR_MESSAGE = {"detail": "Something went wrong while processing your request"}
 
 UNAUTHORIZED_RESPONSE_TYPE = openapi.Response(
     description='Unauthorized',
@@ -37,6 +38,32 @@ UNAUTHORIZED_RESPONSE_TYPE = openapi.Response(
             'detail': openapi.Schema(
                 type='string',
                 description='Authentication credentials were not provided'
+            )
+        }
+    )
+)
+
+INTERNAL_SERVER_ERROR_RESPONSE_TYPE = openapi.Response(
+    description='Internal Server Error', 
+    schema=openapi.Schema(
+        type='object', 
+        properties={
+            'errors': openapi.Schema(
+                type='array', 
+                items=openapi.Schema(
+                    type='object',
+                    properties={
+                        'detail': openapi.Schema(type='string', description="Something went wrong while processing your request")
+                    }
+                )
+            ),
+            'data': openapi.Schema(
+                type='null',
+                description=None
+            ),
+            'success': openapi.Schema(
+                type='boolean',
+                description=None,
             )
         }
     )
@@ -148,63 +175,73 @@ class StudentViewSet(viewsets.ModelViewSet):
                             required=False,
                         ),
                     ] + PAGINATION_LIST, 
-                    responses={200: CourseNoRequiredSerializer(many=True)})
+                    responses={401 : UNAUTHORIZED_RESPONSE_TYPE,200: CourseNoRequiredSerializer(many=True), 400: 'Bad Request', 500:INTERNAL_SERVER_ERROR_RESPONSE_TYPE})
 # 'methods' can be used to apply the same modification to multiple methods
 @swagger_auto_schema(methods=['post'], request_body=CourseSerializer,
                     # in this api, response body was generated automatically still we have overridden responses for our custom implmentation
-                    responses={401 : UNAUTHORIZED_RESPONSE_TYPE, 200: CourseNoRequiredSerializer,  400: 'Bad Request'},
+                    responses={401 : UNAUTHORIZED_RESPONSE_TYPE, 200: CourseNoRequiredSerializer,  400: 'Bad Request', 500:INTERNAL_SERVER_ERROR_RESPONSE_TYPE},
                      )
 
 @api_view(['GET' , 'POST'])
+@authentication_classes([BasicAuthentication])
+@permission_classes([IsAuthenticated])
 def courseListView(request):
     if request.method == 'GET':
-        id = request.GET["id"] if "id" in request.GET and request.GET["id"] is not None and request.GET['id'] != "" else None
-        rid = request.GET["rid"] if "rid" in request.GET and request.GET["rid"] is not None and request.GET['rid'] != "" else None
-        if id:
-            return Response({"success":True, "success_message":"Record found", "pagination":None, "data":f'custom response for id {id} parameter'}, status=status.HTTP_200_OK)
-        if rid:
-            return Response({"success":True, "success_message":"Record found", "pagination":None, "data":f'custom response for rid {rid} parameter'}, status=status.HTTP_200_OK)
-        
-        offset, limit, page, page_size, order = getLimitOffset(request)
-        print("offset, limit, page, page_size, order",offset, limit, page, page_size, order)
-        if order.lower() == "asc": 
-            query_order = "id" 
-        else:
-            query_order = "-id"  
-        courses_queryset = Course.objects.all().order_by(query_order)
-        if not courses_queryset:
-            # here nothing will display on swagger because we have used status code status = status.HTTP_204_NO_CONTENT
-            return Response({"filters":None, "success":True, "success_message":"No record found", "errors":[], "pagination":None, "data":None,}, status=status.HTTP_204_NO_CONTENT)
-        total_records = len(courses_queryset) 
+        try:
+            id = request.GET["id"] if "id" in request.GET and request.GET["id"] is not None and request.GET['id'] != "" else None
+            rid = request.GET["rid"] if "rid" in request.GET and request.GET["rid"] is not None and request.GET['rid'] != "" else None
+            if id:
+                return Response({"success":True, "success_message":"Record found", "pagination":None, "data":f'custom response for id {id} parameter'}, status=status.HTTP_200_OK)
+            if rid:
+                return Response({"success":True, "success_message":"Record found", "pagination":None, "data":f'custom response for rid {rid} parameter'}, status=status.HTTP_200_OK)
+            
+            offset, limit, page, page_size, order = getLimitOffset(request)
+            print("offset, limit, page, page_size, order",offset, limit, page, page_size, order)
+            if order.lower() == "asc": 
+                query_order = "id" 
+            else:
+                query_order = "-id"  
+            courses_queryset = Course.objects.all().order_by(query_order)
+            if not courses_queryset:
+                # here nothing will display on swagger because we have used status code status = status.HTTP_204_NO_CONTENT
+                return Response({"filters":None, "success":True, "success_message":"No record found", "errors":[], "pagination":None, "data":None,}, status=status.HTTP_204_NO_CONTENT)
+            total_records = len(courses_queryset) 
 
-        courses_queryset = courses_queryset[offset:limit]
-        count = len(courses_queryset) 
-        if total_records == count or page == 0: 
-            page = 1 
-    
-        if page_size == 0: 
-            page_size = total_records 
+            courses_queryset = courses_queryset[offset:limit]
+            count = len(courses_queryset) 
+            if total_records == count or page == 0: 
+                page = 1 
         
-        if page_size > 0: 
-            total_pages = math.ceil(total_records/page_size) 
-        else: 
-            total_pages = 1 
-        pagination = {"total_records" : total_records, "count" : count, "page_size" : page_size, "total_pages" : total_pages, "current_page" : page, "order" : order}        
-        course_serialize_data = CourseSerializer(courses_queryset , many=True).data 
-        return Response({"success":True, "success_message":"Record found", "pagination":pagination, "data":course_serialize_data}, status=status.HTTP_200_OK)
+            if page_size == 0: 
+                page_size = total_records 
+            
+            if page_size > 0: 
+                total_pages = math.ceil(total_records/page_size) 
+            else: 
+                total_pages = 1 
+            pagination = {"total_records" : total_records, "count" : count, "page_size" : page_size, "total_pages" : total_pages, "current_page" : page, "order" : order}        
+            course_serialize_data = CourseSerializer(courses_queryset , many=True).data 
+            return Response({"success":True, "success_message":"Record found", "pagination":pagination, "data":course_serialize_data}, status=status.HTTP_200_OK)
+        except Exception as e:
+            return Response({"errors":[SERVER_ERROR_MESSAGE], "data":None, "success":False}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
 
     elif request.method == 'POST':
-        courseSerializer = CourseSerializer(data = request.data)
-        if courseSerializer.is_valid():
-            courseSerializer.save()
-            return Response(courseSerializer.data , status=status.HTTP_201_CREATED)
-        
-        return Response(courseSerializer.errors)
-@swagger_auto_schema(method='get', responses={200: CourseSerializer(), 404:DETAILS_NOT_FOUND_RESPONSE})
-@swagger_auto_schema(method='put', responses={200: CourseSerializer(), 401 : UNAUTHORIZED_RESPONSE_TYPE, 400:'Bad Request', 404:DETAILS_NOT_FOUND_RESPONSE})
-@swagger_auto_schema(method='delete', responses={200: API_DELETE_RESPONSE, 404:DETAILS_NOT_FOUND_RESPONSE})
+        try:
+            courseSerializer = CourseSerializer(data = request.data)
+            if courseSerializer.is_valid():
+                courseSerializer.save()
+                return Response(courseSerializer.data , status=status.HTTP_201_CREATED)
+            return Response(courseSerializer.errors)
+        except Exception as e:
+            return Response({"errors":[SERVER_ERROR_MESSAGE], "data":None, "success":False}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+
+@swagger_auto_schema(method='get', responses={200: CourseSerializer(), 404:DETAILS_NOT_FOUND_RESPONSE, 400: 'Bad Request', 500:INTERNAL_SERVER_ERROR_RESPONSE_TYPE})
+@swagger_auto_schema(method='put', responses={200: CourseSerializer(), 401 : UNAUTHORIZED_RESPONSE_TYPE, 404:DETAILS_NOT_FOUND_RESPONSE, 400: 'Bad Request', 500:INTERNAL_SERVER_ERROR_RESPONSE_TYPE})
+@swagger_auto_schema(method='delete', responses={200: API_DELETE_RESPONSE, 404:DETAILS_NOT_FOUND_RESPONSE, 400: 'Bad Request', 500:INTERNAL_SERVER_ERROR_RESPONSE_TYPE})
 @api_view(['GET' , 'PUT' , 'DELETE'])
+@authentication_classes([BasicAuthentication])
+@permission_classes([IsAuthenticated])
 def courseDetailView(request , pk):
 
     # get_object_or_404 is the recommended method
@@ -212,22 +249,31 @@ def courseDetailView(request , pk):
     try:
         course = Course.objects.get(pk=pk)
     except Course.DoesNotExist:
-        return Response(status=status.HTTP_404_NOT_FOUND)
+        return Response({"detail":"Not found"},status=status.HTTP_404_NOT_FOUND)
 
     if request.method == 'GET':
-        courseSerializer = CourseSerializer(course) 
-        return Response(courseSerializer.data)
+        try:
+            courseSerializer = CourseSerializer(course) 
+            return Response(courseSerializer.data)
+        except Exception as e:
+            return Response({"errors":[SERVER_ERROR_MESSAGE], "data":None, "success":False}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
     elif request.method == 'PUT':
-        courseSerializer = CourseSerializer(course , data = request.data)
-        if courseSerializer.is_valid():
-            courseSerializer.save()
-            return Response(courseSerializer.data)
-        return Response(courseSerializer.errors)
+        try:
+            courseSerializer = CourseSerializer(course , data = request.data)
+            if courseSerializer.is_valid():
+                courseSerializer.save()
+                return Response(courseSerializer.data)
+            return Response(courseSerializer.errors)
+        except Exception as e:
+            return Response({"errors":[SERVER_ERROR_MESSAGE], "data":None, "success":False}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
     elif request.method == 'DELETE':
-        course.delete()
-        return Response({"message":f"record deleted successfully {pk}", "success":True, "data":None})
+        try:
+            course.delete()
+            return Response({"message":f"record deleted successfully {pk}", "success":True, "data":None})
+        except Exception as e:
+            return Response({"errors":[SERVER_ERROR_MESSAGE], "data":None, "success":False}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
 class EmployeeAPIView(generics.ListAPIView):
     # queryset=Employee.objects.all()
@@ -241,7 +287,8 @@ class EmployeeAPIView(generics.ListAPIView):
         return qs
 
 class TeachersApiView(APIView):
-    
+    authentication_classes=[TokenAuthentication,]
+    permission_classes=[IsAuthenticated,]
     # In Swagger (OpenAPI), a tag is used to group related API endpoints together, enhancing the organization and readability of the API documentation.
     @swagger_auto_schema(
                      manual_parameters = [ 
@@ -260,88 +307,105 @@ class TeachersApiView(APIView):
                             required=False,
                         ),
                     ] + PAGINATION_LIST, 
-                    responses={200: TeachersSerializer(many=True)},
+                    responses={401 : UNAUTHORIZED_RESPONSE_TYPE, 200: TeachersSerializer(many=True), 400: 'Bad Request', 500:INTERNAL_SERVER_ERROR_RESPONSE_TYPE},
                     tags=['Teachers API'],
                     )
     def get(self, request):
-        id = request.GET["id"] if "id" in request.GET and request.GET["id"] is not None and request.GET['id'] != "" else None
-        rid = request.GET["rid"] if "rid" in request.GET and request.GET["rid"] is not None and request.GET['rid'] != "" else None
-        if id:
-            return Response({"success":True, "success_message":"Record found", "pagination":None, "data":f'custom response for id {id} parameter'}, status=status.HTTP_200_OK)
-        if rid:
-            return Response({"success":True, "success_message":"Record found", "pagination":None, "data":f'custom response for rid {rid} parameter'}, status=status.HTTP_200_OK)
-        
-        offset, limit, page, page_size, order = getLimitOffset(request)
-        print("offset, limit, page, page_size, order",offset, limit, page, page_size, order)
-        if order.lower() == "asc": 
-            query_order = "id" 
-        else:
-            query_order = "-id"  
-        teachers_queryset = Teachers.objects.all().order_by(query_order)
-        if not teachers_queryset:
-            # here nothing will display on swagger because we have used status code status = status.HTTP_204_NO_CONTENT
-            return Response({"filters":None, "success":True, "success_message":"No record found", "errors":[], "pagination":None, "data":None,}, status=status.HTTP_204_NO_CONTENT)
-        total_records = len(teachers_queryset) 
+        try:
+            id = request.GET["id"] if "id" in request.GET and request.GET["id"] is not None and request.GET['id'] != "" else None
+            rid = request.GET["rid"] if "rid" in request.GET and request.GET["rid"] is not None and request.GET['rid'] != "" else None
+            if id:
+                return Response({"success":True, "success_message":"Record found", "pagination":None, "data":f'custom response for id {id} parameter'}, status=status.HTTP_200_OK)
+            if rid:
+                return Response({"success":True, "success_message":"Record found", "pagination":None, "data":f'custom response for rid {rid} parameter'}, status=status.HTTP_200_OK)
+            
+            offset, limit, page, page_size, order = getLimitOffset(request)
+            print("offset, limit, page, page_size, order",offset, limit, page, page_size, order)
+            if order.lower() == "asc": 
+                query_order = "id" 
+            else:
+                query_order = "-id"  
+            teachers_queryset = Teachers.objects.all().order_by(query_order)
+            if not teachers_queryset:
+                # here nothing will display on swagger because we have used status code status = status.HTTP_204_NO_CONTENT
+                return Response({"filters":None, "success":True, "success_message":"No record found", "errors":[], "pagination":None, "data":None,}, status=status.HTTP_204_NO_CONTENT)
+            total_records = len(teachers_queryset) 
 
-        teachers_queryset = teachers_queryset[offset:limit]
-        count = len(teachers_queryset) 
-        if total_records == count or page == 0: 
-            page = 1 
-    
-        if page_size == 0: 
-            page_size = total_records 
+            teachers_queryset = teachers_queryset[offset:limit]
+            count = len(teachers_queryset) 
+            if total_records == count or page == 0: 
+                page = 1 
         
-        if page_size > 0: 
-            total_pages = math.ceil(total_records/page_size) 
-        else: 
-            total_pages = 1 
-        pagination = {"total_records" : total_records, "count" : count, "page_size" : page_size, "total_pages" : total_pages, "current_page" : page, "order" : order}        
-        teachers_serialize_data = TeachersSerializer(teachers_queryset , many=True).data 
-        return Response({"success":True, "success_message":"Record found", "pagination":pagination, "data":teachers_serialize_data}, status=status.HTTP_200_OK)
+            if page_size == 0: 
+                page_size = total_records 
+            
+            if page_size > 0: 
+                total_pages = math.ceil(total_records/page_size) 
+            else: 
+                total_pages = 1 
+            pagination = {"total_records" : total_records, "count" : count, "page_size" : page_size, "total_pages" : total_pages, "current_page" : page, "order" : order}        
+            teachers_serialize_data = TeachersSerializer(teachers_queryset , many=True).data 
+            return Response({"success":True, "success_message":"Record found", "pagination":pagination, "data":teachers_serialize_data}, status=status.HTTP_200_OK)
+        except Exception as e:
+            return Response({"errors":[SERVER_ERROR_MESSAGE], "data":None, "success":False}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
     # In Swagger (OpenAPI), a tag is used to group related API endpoints together, enhancing the organization and readability of the API documentation.
     @swagger_auto_schema(request_body=TeachersSerializer,
                     # in this api, response body was generated automatically still we have overridden responses for our custom implmentation
-                    responses={401 : UNAUTHORIZED_RESPONSE_TYPE, 200: TeachersSerializer,  400: 'Bad Request'},
+                    responses={401 : UNAUTHORIZED_RESPONSE_TYPE, 200: TeachersSerializer,  400: 'Bad Request', 500:INTERNAL_SERVER_ERROR_RESPONSE_TYPE},
                     tags=['Teachers API'],
                      )
     def post(self,request):
-        serializer=TeachersSerializer(data=request.data)
-        if serializer.is_valid():
-            serializer.save()
-            return Response({'data':serializer.data, 'status':200})
-        return Response(serializer.errors,status=400)
+        try:
+            serializer=TeachersSerializer(data=request.data)
+            if serializer.is_valid():
+                serializer.save()
+                return Response({'data':serializer.data, 'status':200})
+            return Response(serializer.errors,status=400)
+        except Exception as e:
+            return Response({"errors":[SERVER_ERROR_MESSAGE], "data":None, "success":False}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
 class TeachersDetailApiView(APIView):
+    authentication_classes=[TokenAuthentication,]
+    permission_classes=[IsAuthenticated,]
     @swagger_auto_schema(responses={200:  openapi.Response(
                             description="OK",
                             schema=TeachersNoRequiredSerializer()
-                        ), 404:DETAILS_NOT_FOUND_RESPONSE, 401 : UNAUTHORIZED_RESPONSE_TYPE,})
+                        ), 404:DETAILS_NOT_FOUND_RESPONSE, 401 : UNAUTHORIZED_RESPONSE_TYPE, 400: 'Bad Request', 500:INTERNAL_SERVER_ERROR_RESPONSE_TYPE})
     def get(self, request, pk=None):
-        teacher = get_object_or_404(Teachers.objects.all(), pk=pk)
-        serializer = TeachersSerializer(teacher)
-        return Response({"data":serializer.data, "status":200})
+        try:
+            teacher = get_object_or_404(Teachers.objects.all(), pk=pk)
+            serializer = TeachersSerializer(teacher)
+            return Response({"data":serializer.data, "status":200})
+        except Exception as e:
+            return Response({"errors":[SERVER_ERROR_MESSAGE], "data":None, "success":False}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
     @swagger_auto_schema(request_body=TeachersSerializer,
                     # in this api, response body was generated automatically still we have overridden responses for our custom implmentation
                     responses={401 : UNAUTHORIZED_RESPONSE_TYPE, 200:  openapi.Response(
                     description="OK",
                     schema=TeachersNoRequiredSerializer()
-                ),  400: 'Bad Request', 404:DETAILS_NOT_FOUND_RESPONSE})
+                ),  400: 'Bad Request', 404:DETAILS_NOT_FOUND_RESPONSE, 500:INTERNAL_SERVER_ERROR_RESPONSE_TYPE})
     def put(self,request,pk=None):
-        teacher = get_object_or_404(Teachers.objects.all(), pk=pk)
-        serializer = TeachersSerializer(teacher, data=request.data)
-        if serializer.is_valid(raise_exception=True):
-            serializer.save()
-            return Response(serializer.data)
-        return Response(serializer.errors)
+        try:
+            teacher = get_object_or_404(Teachers.objects.all(), pk=pk)
+            serializer = TeachersSerializer(teacher, data=request.data)
+            if serializer.is_valid(raise_exception=True):
+                serializer.save()
+                return Response(serializer.data)
+            return Response(serializer.errors)
+        except Exception as e:
+            return Response({"errors":[SERVER_ERROR_MESSAGE], "data":None, "success":False}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
-    @swagger_auto_schema(responses={200: API_DELETE_RESPONSE, 404:DETAILS_NOT_FOUND_RESPONSE, 401 : UNAUTHORIZED_RESPONSE_TYPE,})
+    @swagger_auto_schema(responses={200: API_DELETE_RESPONSE, 404:DETAILS_NOT_FOUND_RESPONSE, 401 : UNAUTHORIZED_RESPONSE_TYPE, 400: 'Bad Request', 500:INTERNAL_SERVER_ERROR_RESPONSE_TYPE})
     def delete(self, request, pk=None, format=None) -> Response:
         """ For deleting a post, HTTP method: DELETE """
-        teacher = get_object_or_404(Teachers.objects.all(), pk=pk)
-        teacher.delete()
-        return Response({"message":f"record deleted successfully {pk}", "success":True, "data":None})
+        try:
+            teacher = get_object_or_404(Teachers.objects.all(), pk=pk)
+            teacher.delete()
+            return Response({"message":f"record deleted successfully {pk}", "success":True, "data":None})
+        except Exception as e:
+            return Response({"errors":[SERVER_ERROR_MESSAGE], "data":None, "success":False}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
 
 class ExampleView(APIView):
