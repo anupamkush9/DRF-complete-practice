@@ -1,3 +1,4 @@
+import os
 from django.shortcuts import render
 from rest_framework.response import Response
 from rest_framework.decorators import api_view
@@ -141,7 +142,10 @@ PAGINATION_LIST = [
 def hello_world(request):
     if request.method == 'POST':
         return Response({"message": "Got some data!", "data": request.data})
-    return Response({"message": "Hello, world!"})
+    if request.method == 'GET':
+        print("*******os.environ*******",os.environ)
+        print("*******POSTGRES_DB*******",os.environ.get('POSTGRES_DB'))
+        return Response({"message": "Hello, world!", "POSTGRES_DB":os.environ.get('POSTGRES_DB'), "all_env":os.environ,})
 
 class HelloView(APIView):
     authentication_classes = [JWTAuthentication, BasicAuthentication]

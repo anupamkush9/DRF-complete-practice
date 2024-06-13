@@ -10,8 +10,26 @@ services:
     command: "python3 manage.py runserver 0.0.0.0:8000"
     volumes:
       - .:/app
+    # for passing environment variable inside container
+    environment:
+      - POSTGRES_DB=postgres1
+      - POSTGRES_USER=postgres1
+      - POSTGRES_PASSWORD=postgres1
     ports:
       - "8000:8000"
+
+  # Database (Postgres)
+  postgres_db:
+    image: postgres:12.4
+    container_name: postgres_db
+    environment:
+      - POSTGRES_DB=postgres
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=postgres
+    ports:
+      - "5432:5432"
+    volumes:
+      - ../local_data1/postgres:/var/lib/postgresql/data
 
 # for running the project
 # sudo docker compose up
