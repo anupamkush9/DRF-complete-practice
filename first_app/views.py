@@ -26,7 +26,7 @@ from drf_yasg.utils import swagger_auto_schema
 from rest_framework.decorators import api_view
 from .utility import getLimitOffset
 import math
-
+from django.db.models import Q
 
 test_param = openapi.Parameter('test', openapi.IN_QUERY, description="test manual param", type=openapi.TYPE_BOOLEAN)
 SERVER_ERROR_MESSAGE = {"detail": "Something went wrong while processing your request"}
@@ -203,6 +203,7 @@ def courseListView(request):
                 limit = int(request.GET["limit"])
             except Exception as e:
                 pass
+            search_term = request.GET.get("search_term", "")
             if limit and limit < 0:
                 return Response({"data":[], "filters":None, "success_message":"", "errors":[{"detail": "Limit value should be greater than Zero"}], "success":False, "pagination":None})
             offset, limit, page, page_size, order = getLimitOffset(request, "desc", 10)
@@ -212,6 +213,13 @@ def courseListView(request):
             else:
                 query_order = "-id"  
             courses_queryset = Course.objects.all().order_by(query_order)
+            if search_term is not None and search_term.strip() != "":
+                try:
+                    search_value = int(search_term)
+                    search_filter = Q(price=search_value) | Q(id=search_value)
+                except:
+                    search_filter = Q(name__icontains=search_term) | Q(author__icontains=search_term)
+                courses_queryset = courses_queryset.filter(search_filter)
             if not courses_queryset:
                 # here nothing will display on swagger because we have used status code status = status.HTTP_204_NO_CONTENT
                 return Response({"filters":None, "success":True, "success_message":"No record found", "errors":[], "pagination":None, "data":None,}, status=status.HTTP_204_NO_CONTENT)
@@ -330,6 +338,7 @@ class TeachersApiView(APIView):
                 limit = int(request.GET["limit"])
             except Exception as e:
                 pass
+            search_term = request.GET.get("search_term", "")
             if limit and limit < 0:
                 return Response({"data":[], "filters":None, "success_message":"", "errors":[{"detail": "Limit value should be greater than Zero"}], "success":False, "pagination":None})
             offset, limit, page, page_size, order = getLimitOffset(request, "desc", 10)
@@ -339,6 +348,13 @@ class TeachersApiView(APIView):
             else:
                 query_order = "-id"  
             teachers_queryset = Teachers.objects.all().order_by(query_order)
+            if search_term is not None and search_term.strip() != "":
+                try:
+                    search_value = float(search_term)
+                    search_filter = Q(teacher_sal=search_value) 
+                except:
+                    search_filter = Q(teacher_name__icontains=search_term) | Q(teacher_addr__icontains=search_term)
+                teachers_queryset = teachers_queryset.filter(search_filter)
             if not teachers_queryset:
                 # here nothing will display on swagger because we have used status code status = status.HTTP_204_NO_CONTENT
                 return Response({"filters":None, "success":True, "success_message":"No record found", "errors":[], "pagination":None, "data":None,}, status=status.HTTP_204_NO_CONTENT)
