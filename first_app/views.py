@@ -194,8 +194,14 @@ def courseListView(request):
                 return Response({"success":True, "success_message":"Record found", "pagination":None, "data":f'custom response for id {id} parameter'}, status=status.HTTP_200_OK)
             if rid:
                 return Response({"success":True, "success_message":"Record found", "pagination":None, "data":f'custom response for rid {rid} parameter'}, status=status.HTTP_200_OK)
-            
-            offset, limit, page, page_size, order = getLimitOffset(request)
+            limit = None
+            try:
+                limit = int(request.GET["limit"])
+            except Exception as e:
+                pass
+            if limit and limit < 0:
+                return Response({"data":[], "filters":None, "success_message":"", "errors":[{"detail": "Limit value should be greater than Zero"}], "success":False, "pagination":None})
+            offset, limit, page, page_size, order = getLimitOffset(request, "desc", 10)
             print("offset, limit, page, page_size, order",offset, limit, page, page_size, order)
             if order.lower() == "asc": 
                 query_order = "id" 
@@ -209,12 +215,7 @@ def courseListView(request):
 
             courses_queryset = courses_queryset[offset:limit]
             count = len(courses_queryset) 
-            if total_records == count or page == 0: 
-                page = 1 
         
-            if page_size == 0: 
-                page_size = total_records 
-            
             if page_size > 0: 
                 total_pages = math.ceil(total_records/page_size) 
             else: 
@@ -223,6 +224,8 @@ def courseListView(request):
             course_serialize_data = CourseSerializer(courses_queryset , many=True).data 
             return Response({"success":True, "success_message":"Record found", "pagination":pagination, "data":course_serialize_data}, status=status.HTTP_200_OK)
         except Exception as e:
+            import traceback
+            print(traceback.format_exc())
             return Response({"errors":[SERVER_ERROR_MESSAGE], "data":None, "success":False}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
 
@@ -318,8 +321,14 @@ class TeachersApiView(APIView):
                 return Response({"success":True, "success_message":"Record found", "pagination":None, "data":f'custom response for id {id} parameter'}, status=status.HTTP_200_OK)
             if rid:
                 return Response({"success":True, "success_message":"Record found", "pagination":None, "data":f'custom response for rid {rid} parameter'}, status=status.HTTP_200_OK)
-            
-            offset, limit, page, page_size, order = getLimitOffset(request)
+            limit = None
+            try:
+                limit = int(request.GET["limit"])
+            except Exception as e:
+                pass
+            if limit and limit < 0:
+                return Response({"data":[], "filters":None, "success_message":"", "errors":[{"detail": "Limit value should be greater than Zero"}], "success":False, "pagination":None})
+            offset, limit, page, page_size, order = getLimitOffset(request, "desc", 10)
             print("offset, limit, page, page_size, order",offset, limit, page, page_size, order)
             if order.lower() == "asc": 
                 query_order = "id" 
@@ -333,12 +342,7 @@ class TeachersApiView(APIView):
 
             teachers_queryset = teachers_queryset[offset:limit]
             count = len(teachers_queryset) 
-            if total_records == count or page == 0: 
-                page = 1 
         
-            if page_size == 0: 
-                page_size = total_records 
-            
             if page_size > 0: 
                 total_pages = math.ceil(total_records/page_size) 
             else: 
@@ -347,6 +351,8 @@ class TeachersApiView(APIView):
             teachers_serialize_data = TeachersSerializer(teachers_queryset , many=True).data 
             return Response({"success":True, "success_message":"Record found", "pagination":pagination, "data":teachers_serialize_data}, status=status.HTTP_200_OK)
         except Exception as e:
+            import traceback
+            print(traceback.format_exc())
             return Response({"errors":[SERVER_ERROR_MESSAGE], "data":None, "success":False}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
     # In Swagger (OpenAPI), a tag is used to group related API endpoints together, enhancing the organization and readability of the API documentation.
