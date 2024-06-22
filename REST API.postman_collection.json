@@ -1,9 +1,9 @@
 {
 	"info": {
-		"_postman_id": "96309c93-1036-49c2-a57d-f16dd1dc00e0",
+		"_postman_id": "68c26ddd-31a2-45d1-9a4c-bdd0e84a26fc",
 		"name": "REST API",
-		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
-		"_exporter_id": "30012341"
+		"schema": "https://schema.getpostman.com/json/collection/v2.0.0/collection.json",
+		"_exporter_id": "36002631"
 	},
 	"item": [
 		{
@@ -11,16 +11,7 @@
 			"request": {
 				"method": "GET",
 				"header": [],
-				"url": {
-					"raw": "localhost:8000/api",
-					"host": [
-						"localhost"
-					],
-					"port": "8000",
-					"path": [
-						"api"
-					]
-				}
+				"url": "localhost:8000/api"
 			},
 			"response": []
 		},
@@ -35,16 +26,7 @@
 						"type": "text"
 					}
 				],
-				"url": {
-					"raw": "localhost:8000/hello",
-					"host": [
-						"localhost"
-					],
-					"port": "8000",
-					"path": [
-						"hello"
-					]
-				}
+				"url": "localhost:8000/hello"
 			},
 			"response": []
 		},
@@ -53,18 +35,10 @@
 			"request": {
 				"auth": {
 					"type": "basic",
-					"basic": [
-						{
-							"key": "password",
-							"value": "admin",
-							"type": "string"
-						},
-						{
-							"key": "username",
-							"value": "admin",
-							"type": "string"
-						}
-					]
+					"basic": {
+						"password": "admin",
+						"username": "admin"
+					}
 				},
 				"method": "GET",
 				"header": [
@@ -74,16 +48,7 @@
 						"type": "text"
 					}
 				],
-				"url": {
-					"raw": "localhost:8000/hello_world",
-					"host": [
-						"localhost"
-					],
-					"port": "8000",
-					"path": [
-						"hello_world"
-					]
-				}
+				"url": "localhost:8000/hello_world"
 			},
 			"response": []
 		},
@@ -110,18 +75,7 @@
 						}
 					}
 				},
-				"url": {
-					"raw": "localhost:8000/api/token/",
-					"host": [
-						"localhost"
-					],
-					"port": "8000",
-					"path": [
-						"api",
-						"token",
-						""
-					]
-				}
+				"url": "localhost:8000/api/token/"
 			},
 			"response": []
 		},
@@ -163,17 +117,7 @@
 						}
 					}
 				},
-				"url": {
-					"raw": "localhost:8000/teachersapiview/",
-					"host": [
-						"localhost"
-					],
-					"port": "8000",
-					"path": [
-						"teachersapiview",
-						""
-					]
-				}
+				"url": "localhost:8000/teachersapiview/"
 			},
 			"response": []
 		},
@@ -191,16 +135,7 @@
 						}
 					}
 				},
-				"url": {
-					"raw": "localhost:8000/courses",
-					"host": [
-						"localhost"
-					],
-					"port": "8000",
-					"path": [
-						"courses"
-					]
-				}
+				"url": "localhost:8000/courses"
 			},
 			"response": []
 		},
@@ -218,17 +153,7 @@
 						}
 					}
 				},
-				"url": {
-					"raw": "localhost:8000/students/",
-					"host": [
-						"localhost"
-					],
-					"port": "8000",
-					"path": [
-						"students",
-						""
-					]
-				}
+				"url": "localhost:8000/students/"
 			},
 			"response": []
 		},
@@ -237,17 +162,7 @@
 			"request": {
 				"method": "GET",
 				"header": [],
-				"url": {
-					"raw": "localhost:8000/teachersapiview/",
-					"host": [
-						"localhost"
-					],
-					"port": "8000",
-					"path": [
-						"teachersapiview",
-						""
-					]
-				}
+				"url": "localhost:8000/teachersapiview/"
 			},
 			"response": []
 		},
@@ -256,16 +171,7 @@
 			"request": {
 				"method": "GET",
 				"header": [],
-				"url": {
-					"raw": "localhost:8000/courses",
-					"host": [
-						"localhost"
-					],
-					"port": "8000",
-					"path": [
-						"courses"
-					]
-				}
+				"url": "localhost:8000/courses"
 			},
 			"response": []
 		},
@@ -283,14 +189,153 @@
 						"type": "text"
 					}
 				],
+				"url": "localhost:8000/students"
+			},
+			"response": []
+		},
+		{
+			"name": "Get All students (filters) gte",
+			"request": {
+				"auth": {
+					"type": "basic",
+					"basic": {
+						"password": "admin",
+						"username": "admin"
+					}
+				},
+				"method": "GET",
+				"header": [
+					{
+						"key": "Authorization",
+						"value": "Token b67dd6d9d922039653b53b0cc8442f75a6b41fcb",
+						"type": "text"
+					}
+				],
 				"url": {
-					"raw": "localhost:8000/students",
+					"raw": "localhost:8000/students?marks__gte=9",
 					"host": [
 						"localhost"
 					],
 					"port": "8000",
 					"path": [
 						"students"
+					],
+					"query": [
+						{
+							"key": "marks__gte",
+							"value": "9"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Get All students (filters) contains",
+			"request": {
+				"auth": {
+					"type": "basic",
+					"basic": {
+						"password": "admin",
+						"username": "admin"
+					}
+				},
+				"method": "GET",
+				"header": [
+					{
+						"key": "Authorization",
+						"value": "Token b67dd6d9d922039653b53b0cc8442f75a6b41fcb",
+						"type": "text"
+					}
+				],
+				"url": {
+					"raw": "localhost:8000/students?name__contains=r",
+					"host": [
+						"localhost"
+					],
+					"port": "8000",
+					"path": [
+						"students"
+					],
+					"query": [
+						{
+							"key": "name__contains",
+							"value": "r"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Get All students (filters) ordering",
+			"request": {
+				"auth": {
+					"type": "basic",
+					"basic": {
+						"password": "admin",
+						"username": "admin"
+					}
+				},
+				"method": "GET",
+				"header": [
+					{
+						"key": "Authorization",
+						"value": "Token b67dd6d9d922039653b53b0cc8442f75a6b41fcb",
+						"type": "text"
+					}
+				],
+				"url": {
+					"raw": "localhost:8000/students?ordering=-marks",
+					"host": [
+						"localhost"
+					],
+					"port": "8000",
+					"path": [
+						"students"
+					],
+					"query": [
+						{
+							"key": "ordering",
+							"value": "-marks"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Get All students (filters) search",
+			"request": {
+				"auth": {
+					"type": "basic",
+					"basic": {
+						"password": "admin",
+						"username": "admin"
+					}
+				},
+				"method": "GET",
+				"header": [
+					{
+						"key": "Authorization",
+						"value": "Token b67dd6d9d922039653b53b0cc8442f75a6b41fcb",
+						"type": "text"
+					}
+				],
+				"url": {
+					"raw": "localhost:8000/students?search=kar",
+					"host": [
+						"localhost"
+					],
+					"port": "8000",
+					"path": [
+						"students"
+					],
+					"query": [
+						{
+							"key": "search",
+							"value": "kar"
+						}
 					]
 				}
 			},
@@ -301,17 +346,7 @@
 			"request": {
 				"method": "GET",
 				"header": [],
-				"url": {
-					"raw": "localhost:8000/teachersdetailsapiview/3",
-					"host": [
-						"localhost"
-					],
-					"port": "8000",
-					"path": [
-						"teachersdetailsapiview",
-						"3"
-					]
-				}
+				"url": "localhost:8000/teachersdetailsapiview/3"
 			},
 			"response": []
 		},
@@ -320,17 +355,7 @@
 			"request": {
 				"method": "GET",
 				"header": [],
-				"url": {
-					"raw": "localhost:8000/courses/1",
-					"host": [
-						"localhost"
-					],
-					"port": "8000",
-					"path": [
-						"courses",
-						"1"
-					]
-				}
+				"url": "localhost:8000/courses/1"
 			},
 			"response": []
 		},
@@ -339,17 +364,7 @@
 			"request": {
 				"method": "GET",
 				"header": [],
-				"url": {
-					"raw": "localhost:8000/students/2",
-					"host": [
-						"localhost"
-					],
-					"port": "8000",
-					"path": [
-						"students",
-						"2"
-					]
-				}
+				"url": "localhost:8000/students/2"
 			},
 			"response": []
 		},
@@ -367,17 +382,7 @@
 						}
 					}
 				},
-				"url": {
-					"raw": "localhost:8000/teachersdetailsapiview/2",
-					"host": [
-						"localhost"
-					],
-					"port": "8000",
-					"path": [
-						"teachersdetailsapiview",
-						"2"
-					]
-				}
+				"url": "localhost:8000/teachersdetailsapiview/2"
 			},
 			"response": []
 		},
@@ -395,17 +400,7 @@
 						}
 					}
 				},
-				"url": {
-					"raw": "localhost:8000/teachersdetailsapiview/2",
-					"host": [
-						"localhost"
-					],
-					"port": "8000",
-					"path": [
-						"teachersdetailsapiview",
-						"2"
-					]
-				}
+				"url": "localhost:8000/teachersdetailsapiview/2"
 			},
 			"response": []
 		},
@@ -423,17 +418,7 @@
 						}
 					}
 				},
-				"url": {
-					"raw": "localhost:8000/teachersdetailsapiview/2",
-					"host": [
-						"localhost"
-					],
-					"port": "8000",
-					"path": [
-						"teachersdetailsapiview",
-						"2"
-					]
-				}
+				"url": "localhost:8000/teachersdetailsapiview/2"
 			},
 			"response": []
 		},
@@ -451,18 +436,7 @@
 						}
 					}
 				},
-				"url": {
-					"raw": "localhost:8000/students/1/",
-					"host": [
-						"localhost"
-					],
-					"port": "8000",
-					"path": [
-						"students",
-						"1",
-						""
-					]
-				}
+				"url": "localhost:8000/students/1/"
 			},
 			"response": []
 		}

@@ -10,7 +10,7 @@ from rest_framework import generics
 from first_app.serializer import TeachersSerializer, EmployeeSerializer
 from rest_framework.generics import get_object_or_404
 from rest_framework.views import APIView
-from rest_framework import viewsets
+from rest_framework import viewsets, filters as django_filters_lib
 from rest_framework.authentication import TokenAuthentication
 from rest_framework.permissions import IsAuthenticated,AllowAny,IsAdminUser
 from rest_framework.response import Response
@@ -27,6 +27,8 @@ from rest_framework.decorators import api_view
 from .utility import getLimitOffset
 import math
 from django.db.models import Q
+from django_filters.rest_framework import DjangoFilterBackend
+from django_filters import rest_framework as filters
 
 test_param = openapi.Parameter('test', openapi.IN_QUERY, description="test manual param", type=openapi.TYPE_BOOLEAN)
 SERVER_ERROR_MESSAGE = {"detail": "Something went wrong while processing your request"}
@@ -154,12 +156,30 @@ class HelloView(APIView):
         content = {'message': 'Hello, GeeksforGeeks'}
         return Response(content)
 
+class StudentFilter(filters.FilterSet):
+    class Meta:
+        model = Student
+        # fields = ['name', 'marks']
+        fields = {
+            'name': ['exact', 'contains'],
+            'marks': ['exact', 'gte'],
+        }
+
+
+# REF : https://www.django-rest-framework.org/api-guide/filtering/
+# REF : https://www.django-rest-framework.org/api-guide/filtering/
 
 class StudentViewSet(viewsets.ModelViewSet):
     authentication_classes=[TokenAuthentication,BasicAuthentication]
     permission_classes=[IsAuthenticated,]
     queryset = Student.objects.all()
     serializer_class = StudentSerializer
+    filter_backends = [DjangoFilterBackend, django_filters_lib.SearchFilter, django_filters_lib.OrderingFilter]
+    filterset_fields = ['name', 'marks', 'email']
+    filterset_class = StudentFilter
+    search_fields = ['name', 'marks', 'email', 'id']
+    ordering_fields = ['name', 'marks', 'email', 'id']
+    ordering = ['id']
 
 # 'method' can be used to customize a single HTTP method of a view
 @swagger_auto_schema(method='get',
