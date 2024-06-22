@@ -175,7 +175,7 @@ class StudentViewSet(viewsets.ModelViewSet):
     queryset = Student.objects.all()
     serializer_class = StudentSerializer
     filter_backends = [DjangoFilterBackend, django_filters_lib.SearchFilter, django_filters_lib.OrderingFilter]
-    filterset_fields = ['name', 'marks', 'email']
+    # filterset_fields = ['name', 'marks', 'email']
     filterset_class = StudentFilter
     search_fields = ['name', 'marks', 'email', 'id']
     ordering_fields = ['name', 'marks', 'email', 'id']
