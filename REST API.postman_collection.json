@@ -1,9 +1,9 @@
 {
 	"info": {
-		"_postman_id": "68c26ddd-31a2-45d1-9a4c-bdd0e84a26fc",
+		"_postman_id": "2dd48574-9447-46cc-8fe5-e30c37ff1c3b",
 		"name": "REST API",
-		"schema": "https://schema.getpostman.com/json/collection/v2.0.0/collection.json",
-		"_exporter_id": "36002631"
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "30012341"
 	},
 	"item": [
 		{
@@ -11,7 +11,16 @@
 			"request": {
 				"method": "GET",
 				"header": [],
-				"url": "localhost:8000/api"
+				"url": {
+					"raw": "localhost:8000/api",
+					"host": [
+						"localhost"
+					],
+					"port": "8000",
+					"path": [
+						"api"
+					]
+				}
 			},
 			"response": []
 		},
@@ -26,7 +35,16 @@
 						"type": "text"
 					}
 				],
-				"url": "localhost:8000/hello"
+				"url": {
+					"raw": "localhost:8000/hello",
+					"host": [
+						"localhost"
+					],
+					"port": "8000",
+					"path": [
+						"hello"
+					]
+				}
 			},
 			"response": []
 		},
@@ -35,10 +53,18 @@
 			"request": {
 				"auth": {
 					"type": "basic",
-					"basic": {
-						"password": "admin",
-						"username": "admin"
-					}
+					"basic": [
+						{
+							"key": "password",
+							"value": "admin",
+							"type": "string"
+						},
+						{
+							"key": "username",
+							"value": "admin",
+							"type": "string"
+						}
+					]
 				},
 				"method": "GET",
 				"header": [
@@ -48,7 +74,16 @@
 						"type": "text"
 					}
 				],
-				"url": "localhost:8000/hello_world"
+				"url": {
+					"raw": "localhost:8000/hello_world",
+					"host": [
+						"localhost"
+					],
+					"port": "8000",
+					"path": [
+						"hello_world"
+					]
+				}
 			},
 			"response": []
 		},
@@ -75,7 +110,18 @@
 						}
 					}
 				},
-				"url": "localhost:8000/api/token/"
+				"url": {
+					"raw": "localhost:8000/api/token/",
+					"host": [
+						"localhost"
+					],
+					"port": "8000",
+					"path": [
+						"api",
+						"token",
+						""
+					]
+				}
 			},
 			"response": []
 		},
@@ -117,7 +163,17 @@
 						}
 					}
 				},
-				"url": "localhost:8000/teachersapiview/"
+				"url": {
+					"raw": "localhost:8000/teachersapiview/",
+					"host": [
+						"localhost"
+					],
+					"port": "8000",
+					"path": [
+						"teachersapiview",
+						""
+					]
+				}
 			},
 			"response": []
 		},
@@ -135,7 +191,16 @@
 						}
 					}
 				},
-				"url": "localhost:8000/courses"
+				"url": {
+					"raw": "localhost:8000/courses",
+					"host": [
+						"localhost"
+					],
+					"port": "8000",
+					"path": [
+						"courses"
+					]
+				}
 			},
 			"response": []
 		},
@@ -153,7 +218,17 @@
 						}
 					}
 				},
-				"url": "localhost:8000/students/"
+				"url": {
+					"raw": "localhost:8000/students/",
+					"host": [
+						"localhost"
+					],
+					"port": "8000",
+					"path": [
+						"students",
+						""
+					]
+				}
 			},
 			"response": []
 		},
@@ -162,7 +237,17 @@
 			"request": {
 				"method": "GET",
 				"header": [],
-				"url": "localhost:8000/teachersapiview/"
+				"url": {
+					"raw": "localhost:8000/teachersapiview/",
+					"host": [
+						"localhost"
+					],
+					"port": "8000",
+					"path": [
+						"teachersapiview",
+						""
+					]
+				}
 			},
 			"response": []
 		},
@@ -171,7 +256,16 @@
 			"request": {
 				"method": "GET",
 				"header": [],
-				"url": "localhost:8000/courses"
+				"url": {
+					"raw": "localhost:8000/courses",
+					"host": [
+						"localhost"
+					],
+					"port": "8000",
+					"path": [
+						"courses"
+					]
+				}
 			},
 			"response": []
 		},
@@ -189,7 +283,16 @@
 						"type": "text"
 					}
 				],
-				"url": "localhost:8000/students"
+				"url": {
+					"raw": "localhost:8000/students",
+					"host": [
+						"localhost"
+					],
+					"port": "8000",
+					"path": [
+						"students"
+					]
+				}
 			},
 			"response": []
 		},
@@ -198,10 +301,18 @@
 			"request": {
 				"auth": {
 					"type": "basic",
-					"basic": {
-						"password": "admin",
-						"username": "admin"
-					}
+					"basic": [
+						{
+							"key": "password",
+							"value": "admin",
+							"type": "string"
+						},
+						{
+							"key": "username",
+							"value": "admin",
+							"type": "string"
+						}
+					]
 				},
 				"method": "GET",
 				"header": [
@@ -235,10 +346,18 @@
 			"request": {
 				"auth": {
 					"type": "basic",
-					"basic": {
-						"password": "admin",
-						"username": "admin"
-					}
+					"basic": [
+						{
+							"key": "password",
+							"value": "admin",
+							"type": "string"
+						},
+						{
+							"key": "username",
+							"value": "admin",
+							"type": "string"
+						}
+					]
 				},
 				"method": "GET",
 				"header": [
@@ -272,10 +391,18 @@
 			"request": {
 				"auth": {
 					"type": "basic",
-					"basic": {
-						"password": "admin",
-						"username": "admin"
-					}
+					"basic": [
+						{
+							"key": "password",
+							"value": "admin",
+							"type": "string"
+						},
+						{
+							"key": "username",
+							"value": "admin",
+							"type": "string"
+						}
+					]
 				},
 				"method": "GET",
 				"header": [
@@ -309,10 +436,18 @@
 			"request": {
 				"auth": {
 					"type": "basic",
-					"basic": {
-						"password": "admin",
-						"username": "admin"
-					}
+					"basic": [
+						{
+							"key": "password",
+							"value": "admin",
+							"type": "string"
+						},
+						{
+							"key": "username",
+							"value": "admin",
+							"type": "string"
+						}
+					]
 				},
 				"method": "GET",
 				"header": [
@@ -346,7 +481,17 @@
 			"request": {
 				"method": "GET",
 				"header": [],
-				"url": "localhost:8000/teachersdetailsapiview/3"
+				"url": {
+					"raw": "localhost:8000/teachersdetailsapiview/3",
+					"host": [
+						"localhost"
+					],
+					"port": "8000",
+					"path": [
+						"teachersdetailsapiview",
+						"3"
+					]
+				}
 			},
 			"response": []
 		},
@@ -355,7 +500,17 @@
 			"request": {
 				"method": "GET",
 				"header": [],
-				"url": "localhost:8000/courses/1"
+				"url": {
+					"raw": "localhost:8000/courses/1",
+					"host": [
+						"localhost"
+					],
+					"port": "8000",
+					"path": [
+						"courses",
+						"1"
+					]
+				}
 			},
 			"response": []
 		},
@@ -364,7 +519,17 @@
 			"request": {
 				"method": "GET",
 				"header": [],
-				"url": "localhost:8000/students/2"
+				"url": {
+					"raw": "localhost:8000/students/2",
+					"host": [
+						"localhost"
+					],
+					"port": "8000",
+					"path": [
+						"students",
+						"2"
+					]
+				}
 			},
 			"response": []
 		},
@@ -382,7 +547,17 @@
 						}
 					}
 				},
-				"url": "localhost:8000/teachersdetailsapiview/2"
+				"url": {
+					"raw": "localhost:8000/teachersdetailsapiview/2",
+					"host": [
+						"localhost"
+					],
+					"port": "8000",
+					"path": [
+						"teachersdetailsapiview",
+						"2"
+					]
+				}
 			},
 			"response": []
 		},
@@ -400,7 +575,17 @@
 						}
 					}
 				},
-				"url": "localhost:8000/teachersdetailsapiview/2"
+				"url": {
+					"raw": "localhost:8000/teachersdetailsapiview/2",
+					"host": [
+						"localhost"
+					],
+					"port": "8000",
+					"path": [
+						"teachersdetailsapiview",
+						"2"
+					]
+				}
 			},
 			"response": []
 		},
@@ -418,7 +603,17 @@
 						}
 					}
 				},
-				"url": "localhost:8000/teachersdetailsapiview/2"
+				"url": {
+					"raw": "localhost:8000/teachersdetailsapiview/2",
+					"host": [
+						"localhost"
+					],
+					"port": "8000",
+					"path": [
+						"teachersdetailsapiview",
+						"2"
+					]
+				}
 			},
 			"response": []
 		},
@@ -436,7 +631,56 @@
 						}
 					}
 				},
-				"url": "localhost:8000/students/1/"
+				"url": {
+					"raw": "localhost:8000/students/1/",
+					"host": [
+						"localhost"
+					],
+					"port": "8000",
+					"path": [
+						"students",
+						"1",
+						""
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "verify_api_token",
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Authorization",
+						"value": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ0b2tlbl90eXBlIjoiYWNjZXNzIiwiZXhwIjoxNzIwNDM0MDk1LCJpYXQiOjE3MjA0MzEwOTUsImp0aSI6ImM1M2YyN2U3MWRhYjRmZmRiMDg4MmIzYjhmZjYxOGY2IiwidXNlcl9pZCI6MX0.EB1qQA37lfev4PTpR0DnvY_LEV0ozxMeFWCIJ-DV63I"
+					},
+					{
+						"key": "Content-Type",
+						"value": "application/json"
+					},
+					{
+						"key": "Cookie",
+						"value": "csrftoken=8Jst2d01sgZyeUZOPFoqponqP9M92PRWLZYru9pUsXtJy2NVvE8ui6qC6YFpHwRH"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"token\":\"eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ0b2tlbl90eXBlIjoiYWNjZXNzIiwiZXhwIjoxNzIwNDM0MDk1LCJpYXQiOjE3MjA0MzEwOTUsImp0aSI6ImM1M2YyN2U3MWRhYjRmZmRiMDg4MmIzYjhmZjYxOGY2IiwidXNlcl9pZCI6MX0.EB1qQA37lfev4PTpR0DnvY_LEV0ozxMeFWCIJ-DV63I\"\n}"
+				},
+				"url": {
+					"raw": "localhost:8000/api/token/verify/",
+					"host": [
+						"localhost"
+					],
+					"port": "8000",
+					"path": [
+						"api",
+						"token",
+						"verify",
+						""
+					]
+				}
 			},
 			"response": []
 		}
